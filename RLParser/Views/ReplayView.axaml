@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:RLParser.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="RLParser.Views.ReplaysView"
+             x:DataType="vm:ReplaysViewModel">
+  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+        
+        <TextBlock Text="Replay Uploader" FontSize="24" HorizontalAlignment="Center"/>
+
+        <Button Content="Select Replay File" 
+                Command="{Binding OpenReplayCommand}" 
+                HorizontalAlignment="Center"
+                Padding="15, 10"/>
+
+        <TextBlock Text="{Binding SelectedFileName}" 
+                   HorizontalAlignment="Center" 
+                   FontStyle="Italic" 
+                   Foreground="Gray"/>
+
+    </StackPanel>
+</UserControl>
