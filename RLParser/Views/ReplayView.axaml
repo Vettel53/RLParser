@@ -11,11 +11,10 @@
         <TextBlock Text="Replay Uploader" FontSize="24" HorizontalAlignment="Center"/>
 
         <Button Content="Select Replay File" 
-                Command="{Binding OpenReplayCommand}" 
                 HorizontalAlignment="Center"
                 Padding="15, 10"/>
 
-        <TextBlock Text="{Binding SelectedFileName}" 
+        <TextBlock Text="Placeholder" 
                    HorizontalAlignment="Center" 
                    FontStyle="Italic" 
                    Foreground="Gray"/>

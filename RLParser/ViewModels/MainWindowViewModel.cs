@@ -1,8 +1,10 @@
-﻿using ReactiveUI;
+﻿using System;
+using ReactiveUI;
 using RLParser.Models;
 using RLParser.Services;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -10,22 +12,41 @@ namespace RLParser.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    [ObservableProperty]
-    private ViewModelBase _currentPage;
+    [ObservableProperty] private ViewModelBase _currentPage;
+    private readonly ReplaysViewModel _replaysViewModel = new();
+    private readonly HomeViewModel _homeViewModel = new();
+    
 
-    public MainWindowViewModel()
+    private readonly FilesService _filesService;
+    public MainWindowViewModel(FilesService filesService)
     {
-        _currentPage = new HomeViewModel();
+        _currentPage = _homeViewModel;
+        _filesService = filesService;
+    }
+    
+    public async Task UploadReplayCommand()
+    {
+        var file = await _filesService.OpenFileAsync();
+            
+        if (file is null)
+        {
+            Console.WriteLine("Failed to open uploaded file.");
+            return;
+        }
+        
+        Console.WriteLine($"File '{file.Name}' opened successfully.");
+
+        await _replaysViewModel.ParseUploadedReplay(file);
     }
 
     [RelayCommand]
     private void NavigateToHome()
     {
-        CurrentPage = new HomeViewModel();
+        CurrentPage = _homeViewModel;
     }
     [RelayCommand]
     private void NavigateReplays() {
-        CurrentPage = new ReplaysViewModel();
+        CurrentPage = _replaysViewModel;
     }
 
     //private string _analysisResult = "No file parsed yet.";
