@@ -27,7 +27,6 @@ namespace RLParser.ViewModels
             Console.WriteLine($"File '{file.Name}': Attempting parsing...");
             
             JObject replayJson = _replayParser.ParseFileToJson(file);
-            Console.WriteLine("Got past this");
             if (replayJson is null)
             {
                 Console.WriteLine("ERROR: replayJson is null.");
