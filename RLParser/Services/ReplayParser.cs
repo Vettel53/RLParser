@@ -6,6 +6,7 @@ using RocketRP.Serializers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.AccessControl;
 using System.Text;
 
@@ -14,6 +15,7 @@ namespace RLParser.Services
     public class ReplayParser
     {
         Dictionary<int, int> activeCarToPlayerMap = new Dictionary<int, int>();
+        Dictionary<int, string> activeCarToPlayerName = new Dictionary<int, string>();
 
         public JObject ParseFileToJson(IStorageFile file)
         {
@@ -114,9 +116,46 @@ namespace RLParser.Services
                         case "TAGame.Car_TA":
                             HandleCarUpdate(update);
                             break;
+                        case "TAGame.PRI_TA":
+                            HandlePriUpdate(update);
+                            break;
                     }
 
                 }
+            }
+
+            foreach (var kvp in activeCarToPlayerName)
+            {
+                Console.WriteLine($"ChannelId: {kvp.Key}, Name: {kvp.Value}");
+            }
+        }
+
+        private void HandlePriUpdate(JToken update)
+        {
+            int carChannelId = (int)update["ChannelId"]; // The physical car object (players are assigned objects)
+
+            var actorToken = update["ActorData"];
+            if (actorToken != null)
+            {
+                MatchNameToChannelId(actorToken, carChannelId);
+            }
+        }
+
+        private void MatchNameToChannelId(JToken actorToken, int carChannelId)
+        {
+            if (activeCarToPlayerMap.ContainsValue(carChannelId))
+            {
+                var playerName = actorToken["PlayerName"];
+                if (playerName != null)
+                {
+                    if (activeCarToPlayerName.ContainsKey(carChannelId)) return; // no dupe channel ids, throws exceptions
+
+                    activeCarToPlayerName.Add(carChannelId, playerName.ToString());
+                    Console.WriteLine("carChannelId: " + carChannelId + " is player (" + playerName + ")");
+                }
+            } else
+            {
+                Console.WriteLine("Value " + carChannelId + " not found.");
             }
         }
 
@@ -150,8 +189,8 @@ namespace RLParser.Services
 
         private void HandleReplicatedRigidBodyState(JToken rbState, int carChannelId)
         {
-            var linearVel = rbState["LinearVelocity"];
-            if (linearVel != null)
+            var linearVel = rbState?["LinearVelocity"];
+            if (linearVel is JObject) // Check if linearVel actually has xyz child properties, linearVel's internal value can be "null" and bypass a null check
             {
                 double velX = (double)linearVel["X"];
                 double velY = (double)linearVel["Y"];
@@ -162,7 +201,7 @@ namespace RLParser.Services
                 if (activeCarToPlayerMap.TryGetValue(carChannelId, out int drivingPlayerTargetIndex))
                 {
                     double speedMph = (double)(speedMagnitude / 44.704) / 100; // Convert Unreal units (cm/s) to MPH, divide by 100 for (idk)
-                    Console.WriteLine($"Player {drivingPlayerTargetIndex} is moving at speed: {speedMph} MPH");
+                    //Console.WriteLine($"Player {drivingPlayerTargetIndex} is moving at speed: {speedMph} MPH");
                     // You can add this speedMagnitude to a running total for the player to average later!
                 }
             }
