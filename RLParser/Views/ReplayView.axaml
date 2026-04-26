@@ -2,22 +2,46 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:models="using:RLParser.Models"
              xmlns:vm="using:RLParser.ViewModels"
+             xmlns:designVm="using:RLParser.ViewModels.Design"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="RLParser.Views.ReplaysView"
              x:DataType="vm:ReplaysViewModel">
-  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
-        
-        <TextBlock Text="Replay Uploader" FontSize="24" HorizontalAlignment="Center"/>
 
-        <Button Content="Select Replay File" 
-                HorizontalAlignment="Center"
-                Padding="15, 10"/>
+  <Design.DataContext>
+    <designVm:DesignReplaysViewModel />
+  </Design.DataContext>
 
-        <TextBlock Text="Placeholder" 
-                   HorizontalAlignment="Center" 
-                   FontStyle="Italic" 
-                   Foreground="Gray"/>
+  <Grid>
+    <ScrollViewer Margin="20,10,20,20" Padding="0,20,20,20">
+      <StackPanel Spacing="20">
+        <TextBlock Text="Recent Replays" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,0"/>
 
-    </StackPanel>
+        <ItemsControl ItemsSource="{Binding RecentReplays}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="models:ReplayCardItem">
+              <Border Classes="Card" Width="200" Height="140" Margin="0,0,15,15">
+                <Grid>
+<!--                  <Image Source="avares://RLParser/Assets/deathmetal.jpg" Stretch="UniformToFill" Opacity="0.5"/>
+-->                  <Image Source="{Binding ThumbnailUri}" Stretch="UniformToFill" Opacity="0.6"/>
+                  <Border Background="Black" Opacity="0.2" VerticalAlignment="Bottom" Height="40"/>
+                  <StackPanel VerticalAlignment="Bottom" Margin="12" Spacing="2">
+                    <TextBlock Text="{Binding Arena}" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding ResultText}" FontSize="11" Foreground="#d4d4d8"/>
+                  </StackPanel>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
 </UserControl>

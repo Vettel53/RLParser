@@ -17,7 +17,7 @@ namespace RLParser.Models
 
         public override string ToString()
         {
-            return $"Player: {Name}, {Score}, {Goals}, {Team}, {TotalBoostGrabs}, {BigBoostGrabs}, {SmallBoostGrabs}";
+            return $"Player: Name: {Name} \nScore: {Score} \nGoals: {Goals} \nTeam: {Team} \nTotalBoostGrabs: {TotalBoostGrabs} \nBigBoostGrabs: {BigBoostGrabs} \nSmallBoostGrabs: {SmallBoostGrabs}";
         }
     }
 }

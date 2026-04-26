@@ -24,6 +24,34 @@ namespace RLParser.Services.Parsing
             {
                 HandleReplicatedRigidBodyState(rbState, carChannelId, context);
             }
+
+            var teamPaintUpdate = update["ActorData"]?["TeamPaint"];
+            if (teamPaintUpdate !=  null) {
+                Console.WriteLine($"[TEAM UPDATE] Found TeamPaint update for Channel {carChannelId}");
+                HandleTeamState(teamPaintUpdate, carChannelId, context);
+            }
+        }
+
+        private void HandleTeamState(JToken teamPaintUpdate, int carChannelId, ReplayParseContext context)
+        {
+            // NOTE: Team 0 is team blue, Team 1 is team orange, and Team -1 is no team/invalid (i think)
+            int teamIndex = teamPaintUpdate["Team"]?.Value<int>() ?? -1;
+
+            if (!context.ActiveCarToPlayerMap.TryGetValue(carChannelId, out int targetIndex))
+            {
+                Console.WriteLine($"[TEAM MAP MISS] No player mapping for Channel {carChannelId}, Team {teamIndex}");
+                return;
+            }
+
+            context.ActiveCarToPlayerName.TryGetValue(targetIndex, out string? name);
+
+            if (teamIndex == -1)
+            {
+                Console.WriteLine($"[TEAM INVALID] Channel {carChannelId}, TargetIndex {targetIndex}, Name {name ?? "Unknown"}");
+                return;
+            }
+
+            Console.WriteLine($"[TEAM MATCH] Found TeamPaint update (Channel {carChannelId}) linked to Player PRI (TargetIndex {targetIndex}) (Name {name ?? "Unknown"}) with Team {teamIndex}");
         }
 
         private static void HandlePlayerReplicationInfo(JToken priToken, int carChannelId, ReplayParseContext context)
