@@ -25,9 +25,6 @@
             <Setter Property="Background" Value="#27272a"/>
             <Setter Property="CornerRadius" Value="8"/>
         </Style>
-        <Style Selector="TabItem /template/ Border#PART_SelectedPipe">
-            <Setter Property="IsVisible" Value="False"/>
-        </Style>
 
         <Style Selector="Button.SidebarBtn">
             <Setter Property="Background" Value="Transparent"/>
@@ -50,11 +47,11 @@
         </Style>
     </Window.Styles>
 
-    <Design.DataContext>
-         <!--This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+<!--    <Design.DataContext>
+         --><!--This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) --><!--
         <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    </Design.DataContext>-->
 
     <Grid ColumnDefinitions="240, *">
         <Border Grid.Column="0" Padding="20" BorderBrush="#27272a" BorderThickness="0,0,1,0">

@@ -20,9 +20,6 @@
             <Setter Property="Background" Value="#27272a"/>
             <Setter Property="CornerRadius" Value="8"/>
         </Style>
-        <Style Selector="TabItem /template/ Border#PART_SelectedPipe">
-            <Setter Property="IsVisible" Value="False"/>
-        </Style>
 
         <Style Selector="Button.SidebarBtn">
             <Setter Property="Background" Value="Transparent"/>

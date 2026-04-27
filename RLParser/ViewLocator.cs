@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using RLParser.ViewModels;
-using System;
+using RLParser.Views;
 using System.Diagnostics.CodeAnalysis;
 
 namespace RLParser
@@ -14,25 +14,15 @@ namespace RLParser
         Url = "https://docs.avaloniaui.net/docs/concepts/view-locator")]
     public class ViewLocator : IDataTemplate
     {
-        public Control? Build(object? param)
+        public Control? Build(object? param) => param switch
         {
-            if (param is null)
-                return null;
+            HomeViewModel => new HomeView(),
+            ReplaysViewModel => new ReplaysView(),
+            null => null,
+            _ => new TextBlock { Text = $"Not Found: {param.GetType().FullName}" }
+        };
 
-            var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
-            var type = Type.GetType(name);
-
-            if (type != null)
-            {
-                return (Control)Activator.CreateInstance(type)!;
-            }
-
-            return new TextBlock { Text = "Not Found: " + name };
-        }
-
-        public bool Match(object? data)
-        {
-            return data is ViewModelBase;
-        }
+        public bool Match(object? data) =>
+            data is HomeViewModel or ReplaysViewModel;
     }
 }
