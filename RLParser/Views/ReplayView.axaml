@@ -4,37 +4,63 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="using:RLParser.Models"
              xmlns:vm="using:RLParser.ViewModels"
+             xmlns:converters="using:RLParser.Converters"
              xmlns:designVm="using:RLParser.ViewModels.Design"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="RLParser.Views.ReplaysView"
              x:DataType="vm:ReplaysViewModel">
+
+  <UserControl.Resources>
+    <converters:BitmapValueConverter x:Key="BitmapValueConverter" />
+  </UserControl.Resources>
 
   <Design.DataContext>
     <designVm:DesignReplaysViewModel />
   </Design.DataContext>
 
   <Grid>
-    <ScrollViewer Margin="20,10,20,20" Padding="0,20,20,20">
+    <ScrollViewer Margin="20,10,20,20" Padding="0,20,0,20" HorizontalScrollBarVisibility="Disabled">
       <StackPanel Spacing="20">
         <TextBlock Text="Recent Replays" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,0"/>
 
         <ItemsControl ItemsSource="{Binding RecentReplays}">
           <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-              <WrapPanel />
+              <WrapPanel ItemWidth="280" ItemHeight="220" Orientation="Horizontal" />
             </ItemsPanelTemplate>
           </ItemsControl.ItemsPanel>
 
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="models:ReplayCardItem">
-              <Border Classes="Card" Width="200" Height="140" Margin="0,0,15,15">
+              <Border Classes="Card" MinWidth="240" MaxWidth="360" MinHeight="200" Margin="0,0,16,16">
                 <Grid>
-<!--                  <Image Source="avares://RLParser/Assets/deathmetal.jpg" Stretch="UniformToFill" Opacity="0.5"/>
--->                  <Image Source="{Binding ThumbnailUri}" Stretch="UniformToFill" Opacity="0.6"/>
-                  <Border Background="Black" Opacity="0.2" VerticalAlignment="Bottom" Height="40"/>
-                  <StackPanel VerticalAlignment="Bottom" Margin="12" Spacing="2">
-                    <TextBlock Text="{Binding Arena}" FontWeight="SemiBold"/>
-                    <TextBlock Text="{Binding ResultText}" FontSize="11" Foreground="#d4d4d8"/>
+                  <Image Source="{Binding ThumbnailUri, Converter={StaticResource BitmapValueConverter}}" Stretch="UniformToFill" Opacity="0.55"/>
+                  <Border Background="Black" Opacity="0.35"/>
+
+                  <StackPanel VerticalAlignment="Bottom" Margin="20" Spacing="8">
+                    <Border Background="#3f3f46" CornerRadius="4" HorizontalAlignment="Left" Padding="6,2">
+                      <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="{Binding MatchType}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="-" Foreground="#a1a1aa" FontSize="10" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TeamSize, StringFormat={}{0}v{0}}"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="10"/>
+                      </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="{Binding ReplayName}" FontSize="24" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="RESULT" Foreground="#4ade80" FontWeight="Bold" FontSize="14"/>
+                      <TextBlock Text="|" Foreground="#a1a1aa"/>
+                      <TextBlock Text="{Binding Team0Score}" Foreground="#d4d4d8" FontSize="14"/>
+                      <TextBlock Text="-" Foreground="#d4d4d8" FontSize="14"/>
+                      <TextBlock Text="{Binding Team1Score}" Foreground="#d4d4d8" FontSize="14"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding Map}" FontSize="12" Foreground="#d4d4d8" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding PlayerCount}" FontSize="12" Foreground="#d4d4d8"/>
                   </StackPanel>
                 </Grid>
               </Border>

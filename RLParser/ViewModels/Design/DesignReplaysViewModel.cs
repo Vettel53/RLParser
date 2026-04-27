@@ -9,19 +9,25 @@ namespace RLParser.ViewModels.Design
         {
             RecentReplays.Add(new ReplayCardItem
             {
-                Arena = "Mannfield (Night)",
-                Playlist = "Ranked Standard",
-                ResultText = "PARSE SUCCESS",
-                ScoreText = "Players: 6",
+                Map = "Mannfield (Night)",
+                MatchType = "Ranked Standard",
+                ReplayName = "Sample Replay 1",
+                PlayerCount = "PARSE SUCCESS",
+                Team0Score = "Blue: 2",
+                Team1Score = "Orange: 3",
+                TeamSize = "3",
                 ThumbnailUri = "avares://RLParser/Assets/deathmetal.jpg"
             });
 
             RecentReplays.Add(new ReplayCardItem
             {
-                Arena = "DFH Stadium",
-                Playlist = "Ranked Doubles",
-                ResultText = "PARSE SUCCESS",
-                ScoreText = "Players: 4",
+                Map = "DFH Stadium",
+                MatchType = "Ranked Doubles",
+                ReplayName = "Sample Replay 2",
+                PlayerCount = "PARSE SUCCESS",
+                Team0Score = "Blue: 1",
+                Team1Score = "Orange: 4",
+                TeamSize = "2",
                 ThumbnailUri = "avares://RLParser/Assets/deathmetal.jpg"
             });
         }

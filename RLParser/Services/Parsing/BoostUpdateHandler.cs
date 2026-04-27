@@ -40,6 +40,7 @@ namespace RLParser.Services.Parsing
             if (boostSteal)
             {
                 Console.WriteLine($"[BOOST STEAL] {playerName} stole a boost from the {(location == BigPadLocation.OrangeGoal ? "Orange" : "Blue")} Goal big pad!");
+                context.IncrementBoostSteal(playerName);
             } else {
                 Console.WriteLine($"[BOOST GRAB] {playerName} grabbed a {padTypeString} boost from channel {boostPadChannelId}.");
             }
@@ -136,7 +137,7 @@ namespace RLParser.Services.Parsing
 
         private BigPadLocation CheckBigBoostLocation(JToken update)
         {
-            if (!TryGetBoostPad(update, out BoostPad? pad))
+            if (!TryGetBoostPad(update, out BoostPad? pad) || pad == null)
             {
                 return BigPadLocation.Unknown;
             }
@@ -161,7 +162,7 @@ namespace RLParser.Services.Parsing
 
         private bool CheckBoostSize(JToken update)
         {
-            return TryGetBoostPad(update, out BoostPad? pad) && pad.BoostAmount >= 15;
+            return TryGetBoostPad(update, out BoostPad? pad) && pad != null && pad.BoostAmount >= 15;
         }
 
         private static bool TryGetBoostPad(JToken update, out BoostPad? pad)
@@ -183,30 +184,30 @@ namespace RLParser.Services.Parsing
             return true;
         }
 
-        private static void CachePadSizeIfNeeded(JToken update, int boostPadChannelId, ReplayParseContext context)
-        {
-            if (context.IsBigBoostPadMap.ContainsKey(boostPadChannelId))
-            {
-                return;
-            }
+        // private static void CachePadSizeIfNeeded(JToken update, int boostPadChannelId, ReplayParseContext context)
+        // {
+        //     if (context.IsBigBoostPadMap.ContainsKey(boostPadChannelId))
+        //     {
+        //         return;
+        //     }
 
-            var initialPosition = update.SelectToken("Vector") ?? update.SelectToken("InitialPosition");
-            if (initialPosition == null)
-            {
-                return;
-            }
+        //     var initialPosition = update.SelectToken("Vector") ?? update.SelectToken("InitialPosition");
+        //     if (initialPosition == null)
+        //     {
+        //         return;
+        //     }
 
-            double x = initialPosition["X"]?.Value<double>() ?? 0;
-            double y = initialPosition["Y"]?.Value<double>() ?? 0;
+        //     double x = initialPosition["X"]?.Value<double>() ?? 0;
+        //     double y = initialPosition["Y"]?.Value<double>() ?? 0;
 
-            double absX = Math.Abs(x);
-            double absY = Math.Abs(y);
+        //     double absX = Math.Abs(x);
+        //     double absY = Math.Abs(y);
 
-            bool isBig = false;
-            if (absX > 3400 && absY < 500) isBig = true;
-            else if (absX > 2900 && absY > 3900) isBig = true;
+        //     bool isBig = false;
+        //     if (absX > 3400 && absY < 500) isBig = true;
+        //     else if (absX > 2900 && absY > 3900) isBig = true;
 
-            context.IsBigBoostPadMap[boostPadChannelId] = isBig;
-        }
+        //     context.IsBigBoostPadMap[boostPadChannelId] = isBig;
+        // }
     }
 }

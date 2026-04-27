@@ -32,16 +32,18 @@ namespace RLParser.Services
             return _fileReader.ParseFileToJson(file);
         }
 
-        public List<PlayerData> ParseReplayJson(JObject jsonObject)
+        public List<PlayerData> ParseReplayJson(JObject jsonObject, out ReplayParseContext? context)
         {
             var extractedPlayers = _playerRosterExtractor.Extract(jsonObject);
             if (extractedPlayers.Count == 0)
             {
                 Console.WriteLine("No player data found in JSON.");
+                context = null;
                 return null;
             }
 
-            var context = new ReplayParseContext(extractedPlayers);
+            context = new ReplayParseContext(extractedPlayers);
+            ExtractMatchProperties(jsonObject, context);
             ProcessActorUpdates(jsonObject, context);
 
             foreach (var kvp in context.ActiveCarToPlayerName)
@@ -51,6 +53,30 @@ namespace RLParser.Services
 
             extractedPlayers.ForEach(Console.WriteLine);
             return extractedPlayers;
+        }
+
+        private void ExtractMatchProperties(JObject jsonObject, ReplayParseContext context)
+        {
+            var matchProperties = jsonObject.SelectToken("Properties") ?? null;
+            if (matchProperties is null) {
+                Console.WriteLine("No match properties found in JSON.");
+                return;
+            }
+
+            string replayName = matchProperties["ReplayName"]?.ToObject<string>() ?? "N/A";
+            string mapName = matchProperties["MapName"]?["Value"]?.ToObject<string>() ?? "N/A";
+            string matchType = matchProperties["MatchType"]?["Value"]?.ToObject<string>() ?? "N/A";
+            int team0Score = matchProperties["Team0Score"]?.ToObject<int>() ?? 0;
+            int team1Score = matchProperties["Team1Score"]?.ToObject<int>() ?? 0;
+            int teamSize = matchProperties["TeamSize"]?.ToObject<int>() ?? 0;
+
+            context.ReplayName = replayName;
+            context.Map = mapName;
+            context.MatchType = matchType;
+            context.Team0Score = team0Score;
+            context.Team1Score = team1Score;
+            context.TeamSize = teamSize;
+            Console.WriteLine($"Extracted Match Properties - ReplayName: {replayName}, Map: {mapName}, MatchType: {matchType}, Team0Score: {team0Score}, Team1Score: {team1Score}, TeamSize: {teamSize}");
         }
 
         private void ProcessActorUpdates(JObject jsonObject, ReplayParseContext context)

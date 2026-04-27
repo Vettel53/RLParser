@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using Newtonsoft.Json.Linq;
 using RLParser.Models;
 using RLParser.Services;
+using RLParser.Services.Parsing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,15 +36,18 @@ namespace RLParser.ViewModels
                 return;
             }
 
-            List<PlayerData> extractedPlayers = _replayParser.ParseReplayJson(replayJson) ?? [];
+            List<PlayerData> extractedPlayers = _replayParser.ParseReplayJson(replayJson, out ReplayParseContext? context) ?? [];
             PlayerList = extractedPlayers;
 
             RecentReplays.Insert(0, new ReplayCardItem
             {
-                Arena = Path.GetFileNameWithoutExtension(file.Name),
-                Playlist = "N/A",
-                ResultText = extractedPlayers.Count > 0 ? "PARSE SUCCESS" : "NO PLAYERS FOUND",
-                ScoreText = $"Players: {extractedPlayers.Count}"
+                Map = context.Map, // placeholder we aren;t extracting arena yet
+                MatchType = context.MatchType, // placeholder we aren;t extracting match type yet
+                ReplayName = context.ReplayName, // placeholder we aren;t extracting replay name yet
+                PlayerCount = extractedPlayers.Count > 0 ? "PARSE SUCCESS" : "NO PLAYERS FOUND",
+                Team0Score = $"Blue: {context.Team0Score}",
+                Team1Score = $"Orange: {context.Team1Score}",
+                TeamSize = context.TeamSize > 0 ? context.TeamSize.ToString() : "0"
             });
 
             await Task.CompletedTask;
