@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="using:RLParser.Models"
              xmlns:vm="using:RLParser.ViewModels"
+             xmlns:views="using:RLParser.Views"
              xmlns:converters="using:RLParser.Converters"
              xmlns:designVm="using:RLParser.ViewModels.Design"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1040" d:DesignHeight="720"
              x:Class="RLParser.Views.ReplaysView"
              x:DataType="vm:ReplaysViewModel">
 
@@ -19,18 +20,25 @@
   </Design.DataContext>
 
   <Grid>
-    <ScrollViewer Margin="20,10,20,20" Padding="0,20,0,20" HorizontalScrollBarVisibility="Disabled">
+    <ScrollViewer IsVisible="{Binding !IsShowingReplayDetails}"
+                  Margin="20,10,20,20"
+                  Padding="0,20,0,20"
+                  HorizontalScrollBarVisibility="Disabled">
       <StackPanel Spacing="20">
         <TextBlock Text="Recent Replays" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,0"/>
 
-        <ItemsControl ItemsSource="{Binding RecentReplays}">
-          <ItemsControl.ItemsPanel>
+        <ListBox ItemsSource="{Binding RecentReplays}"
+                 SelectedItem="{Binding SelectedReplay}"
+                 Background="Transparent"
+                 BorderThickness="0"
+                 Padding="0">
+          <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
               <WrapPanel ItemWidth="280" ItemHeight="220" Orientation="Horizontal" />
             </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
+          </ListBox.ItemsPanel>
 
-          <ItemsControl.ItemTemplate>
+          <ListBox.ItemTemplate>
             <DataTemplate x:DataType="models:ReplayCardItem">
               <Border Classes="Card" MinWidth="240" MaxWidth="360" MinHeight="200" Margin="0,0,16,16">
                 <Grid>
@@ -42,10 +50,7 @@
                       <StackPanel Orientation="Horizontal" Spacing="6">
                         <TextBlock Text="{Binding MatchType}" FontSize="10" FontWeight="Bold" Foreground="White"/>
                         <TextBlock Text="-" Foreground="#a1a1aa" FontSize="10" FontWeight="Bold"/>
-                        <TextBlock Text="{Binding TeamSize, StringFormat={}{0}v{0}}"
-                                   Foreground="White"
-                                   FontWeight="Bold"
-                                   FontSize="10"/>
+                        <TextBlock Text="{Binding TeamSize, StringFormat={}{0}v{0}}" Foreground="White" FontWeight="Bold" FontSize="10"/>
                       </StackPanel>
                     </Border>
 
@@ -60,14 +65,17 @@
                     </StackPanel>
 
                     <TextBlock Text="{Binding Map}" FontSize="12" Foreground="#d4d4d8" TextTrimming="CharacterEllipsis"/>
-                    <TextBlock Text="{Binding PlayerCount}" FontSize="12" Foreground="#d4d4d8"/>
+                    <TextBlock Text="{Binding PlayerCount, StringFormat={}{0} players}" FontSize="12" Foreground="#d4d4d8"/>
                   </StackPanel>
                 </Grid>
               </Border>
             </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+          </ListBox.ItemTemplate>
+        </ListBox>
       </StackPanel>
     </ScrollViewer>
+
+    <views:ReplayDetailsView IsVisible="{Binding IsShowingReplayDetails}"
+                             DataContext="{Binding}"/>
   </Grid>
 </UserControl>
